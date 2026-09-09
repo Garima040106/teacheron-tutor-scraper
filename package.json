@@ -1,0 +1,26 @@
+{
+  "name": "teacheron-tutor-scraper",
+  "version": "1.0.0",
+  "description": "Desktop application for scraping public tutor job listings from TeacherOn",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [
+    "electron",
+    "playwright",
+    "camoufox",
+    "teacheron",
+    "scraper"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^39.0.0"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.0.0",
+    "camoufox-js": "^1.0.0",
+    "playwright": "^1.55.0"
+  }
+}
