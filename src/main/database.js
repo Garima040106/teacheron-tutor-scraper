@@ -70,15 +70,21 @@ function getJobsBySearch(subject, location) {
     const searchSubject = subject.trim().toLowerCase();
     const searchLocation = location.trim().toLowerCase();
 
+    let locationPattern = `%${searchLocation}%`;
+
+    if (searchLocation === "bangalore") {
+        locationPattern = "%bangal%";
+    }
+
     return db.prepare(`
         SELECT *
         FROM jobs
-        WHERE LOWER(subjects) = ?
+        WHERE LOWER(subjects) LIKE ?
         AND LOWER(location) LIKE ?
         ORDER BY id DESC
     `).all(
-        searchSubject,
-        `%${searchLocation}%`
+        `%${searchSubject}%`,
+        locationPattern
     );
 }
 

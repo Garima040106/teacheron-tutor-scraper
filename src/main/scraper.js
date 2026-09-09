@@ -96,6 +96,10 @@ async function scrapeTutorJobs(subject, location) {
                             document.querySelector("h1")?.innerText?.trim() ||
                             "";
 
+                        const titleIndex = lines.findIndex(
+                            (line) => line === title
+                        );
+
                         const detailsIndex = lines.findIndex((line) =>
                             /Posted\s*:/i.test(line)
                         );
@@ -105,14 +109,29 @@ async function scrapeTutorJobs(subject, location) {
                                 ? lines[detailsIndex]
                                 : "";
 
-                        /*
-                         * Everything before "Posted :" contains:
-                         *
-                         * Location + Budget
-                         *
-                         * Example:
-                         * Janakpuri, New Delhi, Delhi, India ₹500/hour (5.27 USD)
-                         */
+                        const subjectCandidates =
+                            titleIndex !== -1 && detailsIndex !== -1
+                                ? lines.slice(
+                                    titleIndex + 1,
+                                    detailsIndex
+                                )
+                                : [];
+
+                        const ignoredSubjectLines = [
+                            "Find Tutors",
+                            "Find Tutor Jobs",
+                            "Assignment help",
+                            "Request a tutor"
+                        ];
+
+                        const actualSubjects = subjectCandidates
+                            .filter((line) => {
+                                return (
+                                    !line.startsWith("Contact ") &&
+                                    !ignoredSubjectLines.includes(line)
+                                );
+                            })
+                            .filter((line) => line.length > 1);
 
                         const beforePosted = details
                             .split(/Posted\s*:/i)[0]
@@ -122,13 +141,13 @@ async function scrapeTutorJobs(subject, location) {
                             /[₹$€£]/
                         );
 
-                        let location = beforePosted;
+                        let jobLocation = beforePosted;
                         let budget = "";
 
                         if (currencyMatch) {
                             const currencyIndex = currencyMatch.index;
 
-                            location = beforePosted
+                            jobLocation = beforePosted
                                 .slice(0, currencyIndex)
                                 .trim();
 
@@ -181,7 +200,8 @@ async function scrapeTutorJobs(subject, location) {
 
                         return {
                             title,
-                            location,
+                            subjects: actualSubjects.join(", "),
+                            location: jobLocation,
                             budget,
                             postedDate: postedMatch
                                 ? postedMatch[1].trim()
@@ -194,10 +214,6 @@ async function scrapeTutorJobs(subject, location) {
                         };
                     });
 
-                    /*
-                     * TeacherOn may use Bengaluru while the user
-                     * searches for Bangalore, so normalize both.
-                     */
                     const requestedLocation =
                         normalizeLocation(location);
 
@@ -232,7 +248,7 @@ async function scrapeTutorJobs(subject, location) {
 
                     jobs.push({
                         title: job.title || jobLink.title,
-                        subjects: subject,
+                        subjects: job.subjects || subject,
                         location: job.location || location,
                         level: job.level,
                         budget: job.budget,
@@ -260,7 +276,7 @@ async function scrapeTutorJobs(subject, location) {
     } catch (error) {
         console.error("Scraping failed:", error);
 
-        return jobs;
+        throw error;
 
     } finally {
         if (browser) {
