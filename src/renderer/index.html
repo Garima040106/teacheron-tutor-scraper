@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>TeacherOn Tutor Job Scraper</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <main class="container">
+
+        <header>
+            <h1>TeacherOn Tutor Job Scraper</h1>
+            <p>
+                Search publicly available tutor requirements
+                by subject and location.
+            </p>
+        </header>
+
+        <section class="search-section">
+
+            <div class="form-group">
+                <label for="subject">Subject</label>
+                <input
+                    type="text"
+                    id="subject"
+                    placeholder="e.g. Mathematics"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="location">Location</label>
+                <input
+                    type="text"
+                    id="location"
+                    placeholder="e.g. Bangalore or Online"
+                >
+            </div>
+
+            <button id="searchButton">
+                Search Tutor Jobs
+            </button>
+
+        </section>
+
+        <section class="status-section">
+            <p id="status">Ready to search.</p>
+        </section>
+
+        <section id="jobsContainer" class="jobs-container">
+        </section>
+
+    </main>
+
+    <script src="renderer.js"></script>
+
+</body>
+</html>
